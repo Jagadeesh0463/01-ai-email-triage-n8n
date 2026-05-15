@@ -1,159 +1,237 @@
-# AI Email Triage & Priority Digest Automation
+# 📧 AI Email Triage & Priority Digest Automation
 
-An AI-powered email management workflow built using n8n, Groq Llama 3.1, and Gmail APIs.
-The system automatically fetches unread emails, classifies them by priority, applies Gmail labels, and generates a clean digest email twice daily.
+AI-powered email management workflow built with **n8n**, **Groq Llama 3.1**, and **Gmail API**.
 
----
-
-# Overview
-
-Managing large volumes of emails can cause important messages to get buried under newsletters, promotions, and notifications.
-
-This workflow solves that problem by using AI to automatically:
-
-* Analyze incoming emails
-* Detect priority levels
-* Organize inboxes with Gmail labels
-* Generate readable digest summaries
+Automatically fetches unread emails, classifies priority using AI, applies Gmail labels, and sends digest summaries — reducing inbox clutter and surfacing important emails faster.
 
 ---
 
-# Features
-
-* Automatic unread email fetching
-* AI-powered email classification
-* Gmail label automation
-* Priority-based email digest
-* Spam and trash filtering
-* Duplicate digest prevention
-* Clean JSON parsing pipeline
-* Scheduled automation every 12 hours
+![n8n](https://img.shields.io/badge/Built%20with-n8n-orange)
+![Groq](https://img.shields.io/badge/LLM-Groq-green)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
 ---
 
-# Email Categories
+## 🚀 Features
 
-## Urgent
-
-Used for:
-
-* Security alerts
-* Fraud warnings
-* Failed payments
-* Important escalations
-
-## Follow-up
-
-Used for:
-
-* Transaction notifications
-* Invoices
-* Pending responses
-* Important communication threads
-
-## FYI
-
-Used for:
-
-* Promotions
-* Newsletters
-* Informational updates
+✔ Fetch unread Gmail messages automatically  
+✔ AI-powered priority classification  
+✔ Gmail label automation  
+✔ Digest email generation  
+✔ Spam & trash filtering  
+✔ Duplicate digest prevention  
+✔ JSON parsing pipeline  
+✔ Configurable scheduling  
 
 ---
 
-# Workflow Architecture
+## 📌 Problem Statement
+
+Important emails often get buried under newsletters, promotions, and notifications.
+
+This workflow uses AI to automatically:
+
+- Analyze incoming emails
+- Detect urgency
+- Categorize messages
+- Apply Gmail labels
+- Generate digest summaries
+
+Result:
+
+**Less inbox noise → Faster response → Better productivity**
+
+---
+
+## 🏗 Workflow Architecture
 
 ```text
 Schedule Trigger
-    ↓
-Get Emails (Unread Gmail Messages)
-    ↓
+      ↓
+Fetch Unread Emails
+      ↓
 Clean Email Data
-    ↓
-AI Agent (Groq Llama 3.1)
-    ↓
-Parse AI JSON Response
-    ↓
-Add Gmail Labels
-    ↓
-Create Priority Digest
-    ↓
-Send Digest Email
+      ↓
+Groq Llama 3.1 Analysis
+      ↓
+Parse JSON Response
+      ↓
+Apply Gmail Labels
+      ↓
+Generate Digest
+      ↓
+Send Summary Email
 ```
 
 ---
 
-# Technologies Used
+## 📷 Workflow Screenshot
 
-* n8n
-* Groq API
-* Llama 3.1 8B Instant
-* Gmail API
-* JavaScript
+Add screenshots here:
 
----
+```text
+screenshots/
+├── workflow-overview.png
+├── digest-email.png
+└── gmail-labels.png
+```
 
-# AI Processing
+Example:
 
-The workflow uses Groq's Llama 3.1 model to:
-
-* classify emails
-* generate short summaries
-* assign priority scores
-* organize inboxes automatically
-
-The AI returns structured JSON responses which are parsed inside the workflow for reliable automation.
+```md
+![Workflow](screenshots/workflow-overview.png)
+```
 
 ---
 
-# Gmail Automation
+## 🧠 AI Classification Categories
 
-The workflow automatically creates inbox organization by applying labels such as:
-
-* Urgent
-* Follow-up
-* FYI
-
-This helps keep important emails visible and easier to manage.
+| Category | Description |
+|----------|-------------|
+| 🔴 Urgent | Security alerts, failed payments, escalations |
+| 🟠 Follow-up | Transactions, invoices, pending replies |
+| 🔵 FYI | Newsletters, promotions, updates |
 
 ---
 
-# Digest Generation
+## ⚙ Tech Stack
 
-At the end of each run, the system creates a summarized digest email containing:
-
-* total urgent emails
-* follow-up emails
-* FYI emails
-* AI-generated summaries
-
-The digest is automatically sent to the configured Gmail account.
-
----
-
-# Automation Logic
-
-* Fetch only unread emails
-* Ignore spam and trash
-* Ignore previously generated digest emails
-* Process emails using AI
-* Sort emails by priority
-* Generate readable summaries
-* Deliver digest automatically
+| Tool | Purpose |
+|------|---------|
+| n8n | Workflow orchestration |
+| Groq API | AI inference |
+| Llama 3.1 8B Instant | Email classification |
+| Gmail API | Email actions |
+| JavaScript | Parsing & digest generation |
 
 ---
 
-# Future Improvements
+## 📦 Repository Structure
 
-* Slack/Telegram urgent alerts
-* HTML digest templates
-* Multi-user support
-* Dashboard analytics
-* Sentiment analysis
-* Attachment summarization
+```text
+.
+├── workflow/
+│     email-triage-digest.json
+│
+├── screenshots/
+│     workflow-overview.png
+│     digest-email.png
+│
+├── .env.example
+├── .gitignore
+└── README.md
+```
 
 ---
 
-# Author
+## 🔧 Prerequisites
 
-Jagadeesh S
+Before setup ensure you have:
+
+- n8n instance running
+- Gmail OAuth configured
+- Groq API credentials
+- Gmail account
+
+---
+
+## 🚀 Installation
+
+Clone repository:
+
+```bash
+git clone https://github.com/your-username/repo-name.git
+
+cd repo-name
+```
+
+Create env:
+
+```bash
+cp .env.example .env
+```
+
+Fill credentials:
+
+```env
+GMAIL_CREDENTIAL_ID=
+GROQ_CREDENTIAL_ID=
+YOUR_EMAIL=
+```
+
+Import workflow:
+
+1. Open n8n
+2. Workflows → Import
+3. Select JSON file
+4. Reconnect credentials
+5. Activate workflow
+
+---
+
+## 🤖 Sample AI Output
+
+```json
+{
+  "category":"Urgent",
+  "summary":"Failed payment detected",
+  "priority_score":3
+}
+```
+
+---
+
+## 📩 Sample Digest
+
+```text
+📧 Email Digest
+
+Urgent: 1
+Follow-up: 3
+FYI: 5
+
+Urgent:
+• Failed payment detected
+
+Follow-up:
+• Invoice awaiting approval
+
+FYI:
+• Weekly newsletter
+```
+
+---
+
+## 🔒 Security
+
+Never commit:
+
+- Real credential IDs
+- Gmail tokens
+- API keys
+- Personal emails
+
+Use placeholders before pushing to GitHub.
+
+---
+
+## 🛣 Roadmap
+
+- [ ] Slack alerts
+- [ ] Telegram alerts
+- [ ] HTML digest templates
+- [ ] Multi-user support
+- [ ] Dashboard analytics
+- [ ] Attachment summarization
+
+---
+
+## 👨‍💻 Author
+
+**Jagadeesh S**
+
+Built using:
+
+`n8n + Groq + Gmail API + JavaScript`
+
+If you found this useful, consider starring ⭐ the repository.
