@@ -15,10 +15,7 @@
       "name": "Schedule Trigger",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1,
-      "position": [
-        288,
-        -32
-      ]
+      "position": [288, -32]
     },
     {
       "parameters": {
@@ -34,14 +31,10 @@
       "name": "Get Emails",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2,
-      "position": [
-        496,
-        -32
-      ],
-      "webhookId": "747e91f4-bb14-444a-a109-1dcb8dcef79d",
+      "position": [496, -32],
       "credentials": {
         "gmailOAuth2": {
-          "id": "MzCK1wWoAgbK5skR",
+          "id": "{{ GMAIL_CREDENTIAL_ID }}",
           "name": "Gmail account"
         }
       }
@@ -54,40 +47,31 @@
       "name": "Clean Email",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        688,
-        -32
-      ]
+      "position": [688, -32]
     },
     {
       "parameters": {
-        "jsCode": "return items.map(item => {\n  const original = item.json;\n  let raw = original.output || '';\n\n  // Extract JSON safely\n  const match = raw.match(/\\{[\\s\\S]*?\\}/);\n\n  let parsed;\n\n  try {\n    parsed = match ? JSON.parse(match[0]) : null;\n\n    if (!parsed || !parsed.category) {\n      throw new Error();\n    }\n  } catch (e) {\n    parsed = {\n      category: 'FYI',\n      summary: original.subject || 'No summary',\n      priority_score: 1\n    };\n  }\n\n  return {\n    json: {\n      ...original,\n      ...parsed\n    }\n  };\n});"
+        "jsCode": "return items.map(item => {\n  const original = item.json;\n  let raw = original.output || '';\n\n  const match = raw.match(/\\{[\\s\\S]*?\\}/);\n\n  let parsed;\n\n  try {\n    parsed = match ? JSON.parse(match[0]) : null;\n\n    if (!parsed || !parsed.category) {\n      throw new Error();\n    }\n  } catch (e) {\n    parsed = {\n      category: 'FYI',\n      summary: original.subject || 'No summary',\n      priority_score: 1\n    };\n  }\n\n  return {\n    json: {\n      ...original,\n      ...parsed\n    }\n  };\n});"
       },
       "id": "9de0359b-199f-48df-adc8-21ee55f1eb26",
       "name": "Parse",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        1280,
-        -32
-      ]
+      "position": [1280, -32]
     },
     {
       "parameters": {
-        "jsCode": "items.sort((a, b) => b.json.priority_score - a.json.priority_score);\n\nconst urgent = items.filter(i => i.json.category === 'Urgent').length;\nconst follow = items.filter(i => i.json.category === 'Follow-up').length;\nconst fyi = items.filter(i => i.json.category === 'FYI').length;\n\nconst lines = items.map(item => {\n  return `🔹 ${item.json.category}: ${item.json.summary}`;\n});\n\nreturn [{\n  json: {\n    digest:\n`📧 Email Digest\n\nUrgent: ${urgent}\nFollow-up: ${follow}\nFYI: ${fyi}\n\n${lines.join('\\n')}`\n  }\n}];"
+        "jsCode": "items.sort((a, b) => b.json.priority_score - a.json.priority_score);\n\nconst urgent = items.filter(i => i.json.category === 'Urgent').length;\nconst follow = items.filter(i => i.json.category === 'Follow-up').length;\nconst fyi = items.filter(i => i.json.category === 'FYI').length;\n\nconst lines = items.map(item => {\n  return `\ud83d\udd39 ${item.json.category}: ${item.json.summary}`;\n});\n\nreturn [{\n  json: {\n    digest:\n`\ud83d\udce7 Email Digest\\n\\nUrgent: ${urgent}\\nFollow-up: ${follow}\\nFYI: ${fyi}\\n\\n${lines.join('\\n')}`\n  }\n}];"
       },
       "id": "2c3e3248-ec58-46b1-a8ea-7810322a5faf",
       "name": "Create Digest",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        1824,
-        -32
-      ]
+      "position": [1824, -32]
     },
     {
       "parameters": {
-        "sendTo": "jagadeeshs4779@gmail.com",
+        "sendTo": "{{ YOUR_EMAIL }}",
         "subject": "Email Digest",
         "emailType": "text",
         "message": "={{ $json.digest }}",
@@ -97,14 +81,10 @@
       "name": "Send Digest",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2,
-      "position": [
-        2016,
-        -32
-      ],
-      "webhookId": "5cc57926-ffe3-4a0d-a926-c41a2fd6d551",
+      "position": [2016, -32],
       "credentials": {
         "gmailOAuth2": {
-          "id": "MzCK1wWoAgbK5skR",
+          "id": "{{ GMAIL_CREDENTIAL_ID }}",
           "name": "Gmail account"
         }
       }
@@ -112,15 +92,12 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=/no_think\n\nYou are an AI email triage assistant.\n\nClassify this email into ONLY one category:\n\n* Urgent\n* Follow-up\n* FYI\n\nRules:\n\n* Fraud alerts, security alerts, failed payments, client escalations → Urgent\n* Transactions, invoices, pending replies, interview emails → Follow-up\n* Promotions, newsletters, updates → FYI\n* Ignore automated digest emails\n\nReturn ONLY valid JSON.\n\nFormat:\n{\n\"category\": \"Urgent\",\n\"summary\": \"short summary under 8 words\",\n\"priority_score\": 1\n}\n\nEmail:\nFrom: {{$json.from}}\nSubject: {{$json.subject}}\nBody: {{$json.bodyText}}\n",
+        "text": "=/no_think\n\nYou are an AI email triage assistant.\n\nClassify this email into ONLY one category:\n\n* Urgent\n* Follow-up\n* FYI\n\nRules:\n\n* Fraud alerts, security alerts, failed payments, client escalations \u2192 Urgent\n* Transactions, invoices, pending replies, interview emails \u2192 Follow-up\n* Promotions, newsletters, updates \u2192 FYI\n* Ignore automated digest emails\n\nReturn ONLY valid JSON.\n\nFormat:\n{\n\"category\": \"Urgent\",\n\"summary\": \"short summary under 8 words\",\n\"priority_score\": 1\n}\n\nEmail:\nFrom: {{$json.from}}\nSubject: {{$json.subject}}\nBody: {{$json.bodyText}}\n",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
-      "position": [
-        896,
-        -32
-      ],
+      "position": [896, -32],
       "id": "444be6dd-91e8-4609-99b2-fc4fa0de25e9",
       "name": "AI Agent"
     },
@@ -134,15 +111,12 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
-      "position": [
-        896,
-        192
-      ],
+      "position": [896, 192],
       "id": "6dc9298f-302e-45ac-9e8b-9978cc63db40",
       "name": "Groq Chat Model",
       "credentials": {
         "groqApi": {
-          "id": "2tvWMKzbkfImX4Ri",
+          "id": "{{ GROQ_CREDENTIAL_ID }}",
           "name": "Groq account"
         }
       }
@@ -155,16 +129,12 @@
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
-      "position": [
-        1568,
-        -32
-      ],
+      "position": [1568, -32],
       "id": "a6d1a131-6caa-49d9-9a8d-5735642ecf87",
       "name": "Add label to message",
-      "webhookId": "1b54d7ef-01d3-4bbb-ad1e-09ff0ff6c422",
       "credentials": {
         "gmailOAuth2": {
-          "id": "MzCK1wWoAgbK5skR",
+          "id": "{{ GMAIL_CREDENTIAL_ID }}",
           "name": "Gmail account"
         }
       }
@@ -173,92 +143,28 @@
   "pinData": {},
   "connections": {
     "Schedule Trigger": {
-      "main": [
-        [
-          {
-            "node": "Get Emails",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Get Emails", "type": "main", "index": 0 }]]
     },
     "Get Emails": {
-      "main": [
-        [
-          {
-            "node": "Clean Email",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Clean Email", "type": "main", "index": 0 }]]
     },
     "Clean Email": {
-      "main": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "AI Agent", "type": "main", "index": 0 }]]
     },
     "Parse": {
-      "main": [
-        [
-          {
-            "node": "Add label to message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Add label to message", "type": "main", "index": 0 }]]
     },
     "Create Digest": {
-      "main": [
-        [
-          {
-            "node": "Send Digest",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Send Digest", "type": "main", "index": 0 }]]
     },
     "AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Parse",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Parse", "type": "main", "index": 0 }]]
     },
     "Groq Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
+      "ai_languageModel": [[{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]]
     },
     "Add label to message": {
-      "main": [
-        [
-          {
-            "node": "Create Digest",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Create Digest", "type": "main", "index": 0 }]]
     }
   },
   "active": false,
@@ -269,7 +175,7 @@
   "versionId": "f1c37bd5-6faa-4daa-9b2b-077664717ae9",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "b54ab3f2387a08ad41459dc70b5fa6c6b62400d3cba35fe5bdc357ca66bc9f6b"
+    "instanceId": "{{ N8N_INSTANCE_ID }}"
   },
   "id": "s7xNhOYS3LNIIAJD",
   "tags": []
