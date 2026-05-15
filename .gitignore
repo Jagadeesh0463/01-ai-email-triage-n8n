@@ -1,0 +1,31 @@
+# n8n workflow files with real credentials
+*-live.json
+*-prod.json
+*-raw.json
+*-export.json
+
+# Local environment secrets
+.env
+.env.*
+!.env.example
+
+# n8n local data (if self-hosted)
+.n8n/
+n8n-data/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Credentials / config
+credentials.json
+config.json
+
+# Python cache (if scripts used)
+__pycache__/
+*.pyc
